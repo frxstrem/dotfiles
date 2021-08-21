@@ -1,0 +1,49 @@
+#!/bin/bash
+# git co
+#
+# Like git checkout, but stashes the state of the branch and restores it
+
+set -e
+
+# parse arguments
+keep_index=0
+patch=0
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    '-p'|'--patch')
+      patch=1
+      shift
+      ;;
+
+    '-k'|'--keep-index'|'--')
+      keep_index=1
+      shift
+      ;;
+
+    *)
+      break;
+      ;;
+  esac
+done
+
+if [[ "$keep_index" -ne 0 ]]; then
+  exec git checkout "$@"
+elif [[ "$patch" -ne 0 ]]; then
+  exec git checkout -p "$@"
+fi
+
+# stash current branch and check out new branch
+branch=$(git rev-parse --abbrev-ref HEAD)
+stash=$(git stash create)
+
+git checkout --recurse-submodules --force "$@"
+new_branch=$(git rev-parse --abbrev-ref HEAD)
+if [[ -n "$stash" ]]; then
+  git stash store -q -m "{switch:[$branch]}" "$stash"
+fi
+
+# unstash changes on new branch, if previously stashed
+stash=$(git stash list --pretty=format:%gD -F --grep-reflog="{switch:[$new_branch]}" -n 1)
+if [[ -n "$stash" ]]; then
+  git stash pop --index -q "$stash"
+fi
