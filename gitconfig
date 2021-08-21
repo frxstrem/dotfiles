@@ -11,3 +11,9 @@
   rev = rev-parse --short
   stat = diff --stat -r
   undo = reset --hard
+
+[rebase]
+  autoSquash = true
+
+[status]
+  short = true
