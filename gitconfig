@@ -16,4 +16,6 @@
   autoSquash = true
 
 [status]
+  branch = true
+  showstash = true
   short = true
