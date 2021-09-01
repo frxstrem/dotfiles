@@ -22,3 +22,9 @@ if command -v git &>/dev/null; then
     git config --global --add include.path "$PWD/gitconfig"
   fi
 fi
+
+if [[ ! -e ~/.inputrc ]]; then
+  ln -s "$PWD/inputrc" ~/.inputrc
+else
+  echo "~/.inputrc already exist; not replacing" >&2
+fi
