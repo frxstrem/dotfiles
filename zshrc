@@ -6,3 +6,4 @@ if [[ -n "$FRX_DOTFILES" ]]; then
 fi
 
 alias gst='git status'
+alias k='kubectl'
